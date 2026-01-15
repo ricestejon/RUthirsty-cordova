@@ -1,6 +1,6 @@
 {
 	"image": "mcr.microsoft.com/devcontainers/universal:2",
 	"features": {
-		"ghcr.io/casl0/devcontainer-features/android-sdk:1": {}
+		"ghcr.io/nordcominc/devcontainer-features/android-sdk:1": {}
 	}
 }
