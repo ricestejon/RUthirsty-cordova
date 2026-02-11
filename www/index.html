@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+    <title>喝水打卡</title>
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+</head>
+<body>
+    <div class="app">
+        <!-- 导航标签 -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="home">首页</button>
+            <button class="nav-tab" data-tab="profile">设置</button>
+        </div>
+
+        <!-- 首页标签页 -->
+        <div class="tab-content active" id="homeTab">
+            <div class="header">
+                <h1>💧 喝水打卡</h1>
+                <div class="today-count">
+                    <span>今日已喝</span>
+                    <span class="count" id="todayCount">0</span>
+                    <span>次</span>
+                </div>
+            </div>
+
+            <!-- 智能推荐区域 -->
+            <div class="recommendation-section" id="recommendationSection">
+                <div class="recommendation-header-row">
+                    <h3>💡 智能推荐</h3>
+                    <label class="quick-buy-switch">
+                        <input type="checkbox" id="quickBuyEnabled">
+                        <span class="switch-text">一键购买</span>
+                    </label>
+                </div>
+
+                <!-- 时段选择器 -->
+                <div class="time-slot-selector">
+                    <button class="time-slot-btn active" data-slot="current">当前时段</button>
+                    <button class="time-slot-btn" data-slot="earlyMorning">清晨</button>
+                    <button class="time-slot-btn" data-slot="morning">上午</button>
+                    <button class="time-slot-btn" data-slot="beforeLunch">饭前</button>
+                    <button class="time-slot-btn" data-slot="afternoon">下午</button>
+                    <button class="time-slot-btn" data-slot="evening">晚上</button>
+                    <button class="time-slot-btn" data-slot="beforeSleep">睡前</button>
+                </div>
+
+                <div class="recommendation-card" id="recommendationCard">
+                    <p class="recommendation-text">请先完善个人资料以获取个性化推荐</p>
+                </div>
+                <button class="buy-btn" id="buyBtn" style="display: none;">
+                    🛒 在美团购买
+                </button>
+            </div>
+
+            <div class="check-in-section">
+                <button class="check-in-btn" id="checkInBtn">
+                    <span class="btn-icon">💧</span>
+                    <span class="btn-text">打卡喝水</span>
+                </button>
+            </div>
+
+            <div class="records-section">
+                <h2>打卡记录</h2>
+                <div class="records-list" id="recordsList">
+                    <p class="empty-message">暂无打卡记录</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 设置标签页 -->
+        <div class="tab-content" id="profileTab">
+            <div class="profile-section">
+                <h2>个人资料</h2>
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label>年龄</label>
+                        <input type="number" id="age" min="1" max="120" placeholder="请输入年龄">
+                    </div>
+                    <div class="form-group">
+                        <label>性别</label>
+                        <select id="gender">
+                            <option value="">请选择</option>
+                            <option value="male">男</option>
+                            <option value="female">女</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>工作类型</label>
+                        <select id="workType">
+                            <option value="">请选择</option>
+                            <option value="office">办公室工作</option>
+                            <option value="physical">体力劳动</option>
+                            <option value="outdoor">户外工作</option>
+                            <option value="student">学生</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="save-btn">保存设置</button>
+                </form>
+
+                <div class="reminder-settings">
+                    <h3>提醒设置</h3>
+                    <div class="form-group">
+                        <label class="switch-label">
+                            <input type="checkbox" id="reminderEnabled">
+                            <span>开启喝水提醒</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/recommendation.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+</body>
+</html>

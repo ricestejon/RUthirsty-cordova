@@ -1,0 +1,21 @@
+# Node modules
+node_modules/
+
+# Cordova generated files
+platforms/
+plugins/
+
+# Build outputs
+*.apk
+*.ipa
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

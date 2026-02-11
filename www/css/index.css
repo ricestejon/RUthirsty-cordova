@@ -1,0 +1,831 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 主题变量 - 默认当前时段 */
+:root {
+    --primary-color-1: #667eea;
+    --primary-color-2: #764ba2;
+    --accent-color-1: #fccb90;
+    --accent-color-2: #d57eeb;
+    --glow-color: rgba(102, 126, 234, 0.4);
+    --accent-glow: rgba(252, 203, 144, 0.4);
+}
+
+/* 清晨主题 - 晨曦粉橙 */
+body.theme-earlyMorning {
+    --primary-color-1: #ff9a9e;
+    --primary-color-2: #fecfef;
+    --accent-color-1: #ffecd2;
+    --accent-color-2: #fcb69f;
+    --glow-color: rgba(255, 154, 158, 0.4);
+    --accent-glow: rgba(252, 182, 159, 0.4);
+}
+
+/* 上午主题 - 活力青蓝 */
+body.theme-morning {
+    --primary-color-1: #4facfe;
+    --primary-color-2: #00f2fe;
+    --accent-color-1: #43e97b;
+    --accent-color-2: #38f9d7;
+    --glow-color: rgba(79, 172, 254, 0.4);
+    --accent-glow: rgba(67, 233, 123, 0.4);
+}
+
+/* 饭前主题 - 温暖橙黄 */
+body.theme-beforeLunch {
+    --primary-color-1: #fa709a;
+    --primary-color-2: #fee140;
+    --accent-color-1: #ffd89b;
+    --accent-color-2: #ff6b6b;
+    --glow-color: rgba(250, 112, 154, 0.4);
+    --accent-glow: rgba(255, 216, 155, 0.4);
+}
+
+/* 下午主题 - 柔和柠檬绿 */
+body.theme-afternoon {
+    --primary-color-1: #a8edea;
+    --primary-color-2: #fed6e3;
+    --accent-color-1: #ffeaa7;
+    --accent-color-2: #55efc4;
+    --glow-color: rgba(168, 237, 234, 0.4);
+    --accent-glow: rgba(255, 234, 167, 0.4);
+}
+
+/* 晚上主题 - 温暖紫红 */
+body.theme-evening {
+    --primary-color-1: #667eea;
+    --primary-color-2: #764ba2;
+    --accent-color-1: #fccb90;
+    --accent-color-2: #d57eeb;
+    --glow-color: rgba(102, 126, 234, 0.4);
+    --accent-glow: rgba(252, 203, 144, 0.4);
+}
+
+/* 睡前主题 - 宁静深蓝紫 */
+body.theme-beforeSleep {
+    --primary-color-1: #2c3e50;
+    --primary-color-2: #4ca1af;
+    --accent-color-1: #8e9eab;
+    --accent-color-2: #667db6;
+    --glow-color: rgba(76, 161, 175, 0.4);
+    --accent-glow: rgba(142, 158, 171, 0.4);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background: linear-gradient(135deg, var(--primary-color-1) 0%, var(--primary-color-2) 100%);
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+    transition: background 0.8s ease;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.4), transparent 60%),
+        radial-gradient(circle at 80% 20%, rgba(252, 203, 144, 0.4), transparent 60%),
+        radial-gradient(circle at 50% 50%, rgba(247, 148, 164, 0.3), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+    animation: gradientPulse 20s ease infinite;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.02) 2px, rgba(255, 255, 255, 0.02) 4px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes gradientPulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.85;
+        transform: scale(1.05);
+    }
+}
+
+.app {
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* 导航标签 */
+.nav-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-radius: 18px;
+    padding: 8px;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.nav-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 20px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.nav-tab:hover {
+    color: rgba(255, 255, 255, 1);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-tab.active {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
+    color: var(--primary-color-1);
+    box-shadow:
+        0 4px 16px var(--glow-color),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 标签页内容 */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.header {
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 26px;
+    padding: 36px;
+    text-align: center;
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+}
+
+.header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    animation: shimmerFloat 6s ease-in-out infinite;
+}
+
+@keyframes shimmerFloat {
+    0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 0.5;
+    }
+    50% {
+        transform: translate(5%, 5%) rotate(5deg);
+        opacity: 0.8;
+    }
+}
+
+.header h1 {
+    color: #ffffff;
+    font-size: 34px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 2px 20px var(--glow-color);
+    transition: text-shadow 0.8s ease;
+}
+
+.today-count {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 500;
+}
+
+.today-count .count {
+    display: inline-block;
+    font-size: 56px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 12px;
+    background: linear-gradient(135deg, var(--accent-color-1) 0%, var(--accent-color-2) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 4px 16px var(--accent-glow));
+    animation: countPulse 2.5s ease-in-out infinite;
+    transition: all 0.8s ease;
+}
+
+@keyframes countPulse {
+    0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 4px 16px var(--accent-glow));
+    }
+    50% {
+        transform: scale(1.08);
+        filter: drop-shadow(0 6px 24px var(--accent-glow));
+    }
+}
+
+/* 推荐区域 */
+.recommendation-section {
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 26px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.recommendation-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.recommendation-section h3 {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 0 2px 12px rgba(102, 126, 234, 0.4);
+}
+
+.quick-buy-switch {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.quick-buy-switch input[type="checkbox"] {
+    width: 48px;
+    height: 26px;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 13px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.quick-buy-switch input[type="checkbox"]::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.95) 100%);
+    top: 2px;
+    left: 2px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.quick-buy-switch input[type="checkbox"]:checked {
+    background: linear-gradient(135deg, var(--accent-color-1) 0%, var(--accent-color-2) 100%);
+    border-color: var(--accent-glow);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quick-buy-switch input[type="checkbox"]:checked::before {
+    left: 24px;
+    box-shadow: 0 2px 12px var(--accent-glow);
+}
+
+.switch-text {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 14px;
+    font-weight: 600;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 时段选择器 */
+.time-slot-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.time-slot-btn {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 20px;
+    padding: 8px 16px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.time-slot-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.time-slot-btn.active {
+    background: linear-gradient(135deg, var(--primary-color-1) 0%, var(--primary-color-2) 100%);
+    border-color: var(--glow-color);
+    color: #ffffff;
+    box-shadow:
+        0 4px 16px var(--glow-color),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.recommendation-card {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 20px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.recommendation-card:hover {
+    background: rgba(255, 255, 255, 0.18);
+    transform: translateY(-2px);
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.recommendation-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.water-icon {
+    font-size: 40px;
+    filter: drop-shadow(0 2px 12px rgba(79, 172, 254, 0.4));
+}
+
+.water-name {
+    color: #ffffff;
+    font-size: 22px;
+    font-weight: 700;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.water-amount {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 700;
+    margin-left: auto;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    padding: 6px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.recommendation-reason {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 12px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.recommendation-text {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 15px;
+    text-align: center;
+}
+
+.recommendation-tips {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.recommendation-tips .tip {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 13px;
+    margin: 6px 0;
+    padding-left: 4px;
+}
+
+/* 购买按钮 */
+.buy-btn {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(20px);
+    border: 2px solid var(--accent-color-1);
+    border-radius: 18px;
+    padding: 14px 20px;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: 16px;
+    box-shadow:
+        0 4px 16px var(--accent-glow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.buy-btn:hover {
+    background: linear-gradient(135deg, var(--accent-color-1) 0%, var(--accent-color-2) 100%);
+    transform: translateY(-2px);
+    box-shadow:
+        0 6px 24px var(--accent-glow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.buy-btn:active {
+    transform: translateY(0);
+}
+
+.check-in-section {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.check-in-btn {
+    background: linear-gradient(135deg, var(--accent-color-1) 0%, var(--accent-color-2) 100%);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border: 2px solid var(--accent-glow);
+    border-radius: 50%;
+    width: 160px;
+    height: 160px;
+    color: #ffffff;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow:
+        0 12px 48px var(--accent-glow),
+        inset 0 2px 0 rgba(255, 255, 255, 0.6),
+        inset 0 -2px 0 rgba(255, 255, 255, 0.3);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    opacity: 0.85;
+}
+
+.check-in-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.check-in-btn:hover {
+    transform: translateY(-6px);
+    opacity: 1;
+    box-shadow:
+        0 16px 64px var(--accent-glow),
+        inset 0 2px 0 rgba(255, 255, 255, 0.7),
+        inset 0 -2px 0 rgba(255, 255, 255, 0.4);
+    border-color: var(--accent-color-1);
+}
+
+.check-in-btn:hover::before {
+    width: 100%;
+    height: 100%;
+}
+
+.check-in-btn:active {
+    transform: translateY(-3px) scale(0.96);
+}
+
+.btn-icon {
+    font-size: 56px;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 4px 16px var(--accent-glow));
+    position: relative;
+    z-index: 1;
+    transition: filter 0.8s ease;
+}
+
+.btn-text {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.records-section {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 28px;
+    padding: 24px;
+    box-shadow:
+        0 8px 32px rgba(31, 38, 135, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+    position: relative;
+}
+
+.records-section h2 {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    text-shadow: 0 2px 12px rgba(102, 126, 234, 0.4);
+}
+
+.records-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.empty-message {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 40px 20px;
+    font-size: 15px;
+}
+
+.record-item {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 18px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: slideInGlass 0.4s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.record-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateX(6px);
+    box-shadow:
+        0 6px 24px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+@keyframes slideInGlass {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.record-time {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 500;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.record-icon {
+    font-size: 24px;
+    filter: drop-shadow(0 2px 8px rgba(102, 126, 234, 0.4));
+}
+
+/* 个人资料设置 */
+.profile-section {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 28px;
+    padding: 24px;
+    box-shadow:
+        0 8px 32px rgba(31, 38, 135, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.profile-section h2 {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    text-shadow: 0 2px 12px rgba(102, 126, 234, 0.4);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 14px;
+    padding: 14px 16px;
+    color: #ffffff;
+    font-size: 16px;
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(252, 203, 144, 0.5);
+    box-shadow:
+        0 4px 16px rgba(102, 126, 234, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.form-group input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.form-group select option {
+    background: rgba(102, 126, 234, 0.95);
+    color: #ffffff;
+}
+
+.save-btn {
+    width: 100%;
+    background: linear-gradient(135deg, rgba(252, 203, 144, 0.3) 0%, rgba(213, 126, 235, 0.3) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(252, 203, 144, 0.4);
+    border-radius: 14px;
+    padding: 16px;
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: 12px;
+    box-shadow:
+        0 4px 16px rgba(252, 203, 144, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.save-btn:hover {
+    background: linear-gradient(135deg, rgba(252, 203, 144, 0.4) 0%, rgba(213, 126, 235, 0.4) 100%);
+    transform: translateY(-2px);
+    box-shadow:
+        0 6px 24px rgba(252, 203, 144, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.save-btn:active {
+    transform: translateY(0);
+}
+
+/* 提醒设置 */
+.reminder-settings {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.reminder-settings h3 {
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    text-shadow: 0 2px 12px rgba(102, 126, 234, 0.4);
+}
+
+.switch-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.switch-label input[type="checkbox"] {
+    width: 56px;
+    height: 30px;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 15px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.switch-label input[type="checkbox"]::before {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.9) 100%);
+    top: 2px;
+    left: 2px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.switch-label input[type="checkbox"]:checked {
+    background: linear-gradient(135deg, rgba(252, 203, 144, 0.5) 0%, rgba(213, 126, 235, 0.5) 100%);
+    border-color: rgba(252, 203, 144, 0.6);
+}
+
+.switch-label input[type="checkbox"]:checked::before {
+    left: 28px;
+    box-shadow: 0 2px 12px rgba(252, 203, 144, 0.5);
+}
