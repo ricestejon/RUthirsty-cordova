@@ -16,6 +16,12 @@ plugins/
 .vscode/
 .idea/
 
+# Environment / secrets
+.env
+.env.*
+*.key
+*.pem
+
 # OS
 .DS_Store
 Thumbs.db

@@ -1,3 +1,24 @@
+// Sanitize a string for safe insertion into HTML
+function escapeHTML(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+// Safely parse JSON with a fallback default
+function safeJSONParse(str, fallback) {
+    try {
+        return JSON.parse(str);
+    } catch (e) {
+        return fallback;
+    }
+}
+
+// Validate that a value is one of the allowed options
+function isAllowedValue(value, allowedValues) {
+    return allowedValues.includes(value);
+}
+
 // 应用主逻辑
 const app = {
     // 初始化
@@ -128,7 +149,7 @@ const app = {
     // 获取所有记录
     getRecords: function() {
         const data = localStorage.getItem('waterRecords');
-        return data ? JSON.parse(data) : [];
+        return data ? safeJSONParse(data, []) : [];
     },
 
     // 获取今日记录
@@ -159,7 +180,7 @@ const app = {
         records.forEach(record => {
             html += `
                 <div class="record-item">
-                    <span class="record-time">${record.date} ${record.time}</span>
+                    <span class="record-time">${escapeHTML(String(record.date))} ${escapeHTML(String(record.time))}</span>
                     <span class="record-icon">💧</span>
                 </div>
             `;
@@ -185,10 +206,27 @@ const app = {
 
     // 保存个人资料
     saveProfile: function() {
+        const ageValue = parseInt(document.getElementById('age').value, 10);
+        const genderValue = document.getElementById('gender').value;
+        const workTypeValue = document.getElementById('workType').value;
+
+        if (isNaN(ageValue) || ageValue < 1 || ageValue > 120) {
+            alert('请输入有效年龄（1-120）');
+            return;
+        }
+        if (!isAllowedValue(genderValue, ['male', 'female'])) {
+            alert('请选择有效的性别');
+            return;
+        }
+        if (!isAllowedValue(workTypeValue, ['office', 'physical', 'outdoor', 'student'])) {
+            alert('请选择有效的工作类型');
+            return;
+        }
+
         const profile = {
-            age: parseInt(document.getElementById('age').value),
-            gender: document.getElementById('gender').value,
-            workType: document.getElementById('workType').value
+            age: ageValue,
+            gender: genderValue,
+            workType: workTypeValue
         };
 
         localStorage.setItem('userProfile', JSON.stringify(profile));
@@ -200,7 +238,7 @@ const app = {
     loadProfile: function() {
         const data = localStorage.getItem('userProfile');
         if (data) {
-            const profile = JSON.parse(data);
+            const profile = safeJSONParse(data, {});
             document.getElementById('age').value = profile.age || '';
             document.getElementById('gender').value = profile.gender || '';
             document.getElementById('workType').value = profile.workType || '';
@@ -219,7 +257,7 @@ const app = {
     // 更新推荐信息
     updateRecommendation: function(timeSlot) {
         const profileData = localStorage.getItem('userProfile');
-        const profile = profileData ? JSON.parse(profileData) : null;
+        const profile = profileData ? safeJSONParse(profileData, null) : null;
 
         const recommendation = WaterRecommendation.getRecommendation(profile, timeSlot);
         const formatted = WaterRecommendation.formatRecommendation(recommendation);
@@ -323,7 +361,7 @@ const app = {
         const profileData = localStorage.getItem('userProfile');
         if (!profileData) return;
 
-        const recommendation = WaterRecommendation.getRecommendation(JSON.parse(profileData));
+        const recommendation = WaterRecommendation.getRecommendation(safeJSONParse(profileData, null));
         if (recommendation) {
             const water = WaterRecommendation.waterTypes[recommendation.waterType];
             this.showNotification(`该喝水了！建议喝${water.name} ${recommendation.amount}ml`);
