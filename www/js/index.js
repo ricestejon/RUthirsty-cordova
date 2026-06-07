@@ -22,19 +22,33 @@ const app = {
 
     // 初始化应用
     initApp: function() {
-        this.loadRecords();
-        this.updateTodayCount();
-        this.bindEvents();
-        this.loadProfile();
-        this.updateRecommendation();
-        this.initReminder();
-        this.switchTheme(); // 应用当前时段主题
+        const initSteps = [
+            { name: 'loadRecords', fn: () => this.loadRecords() },
+            { name: 'updateTodayCount', fn: () => this.updateTodayCount() },
+            { name: 'bindEvents', fn: () => this.bindEvents() },
+            { name: 'loadProfile', fn: () => this.loadProfile() },
+            { name: 'updateRecommendation', fn: () => this.updateRecommendation() },
+            { name: 'initReminder', fn: () => this.initReminder() },
+            { name: 'switchTheme', fn: () => this.switchTheme() }
+        ];
+
+        for (const step of initSteps) {
+            try {
+                step.fn();
+            } catch (error) {
+                console.error(`[RUthirsty] Initialization step "${step.name}" failed:`, error);
+            }
+        }
     },
 
     // 绑定事件
     bindEvents: function() {
         const checkInBtn = document.getElementById('checkInBtn');
-        checkInBtn.addEventListener('click', this.checkIn.bind(this));
+        if (checkInBtn) {
+            checkInBtn.addEventListener('click', this.checkIn.bind(this));
+        } else {
+            console.error('[RUthirsty] Missing DOM element: checkInBtn');
+        }
 
         // 标签页切换
         const navTabs = document.querySelectorAll('.nav-tab');
@@ -47,28 +61,44 @@ const app = {
 
         // 个人资料表单
         const profileForm = document.getElementById('profileForm');
-        profileForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.saveProfile();
-        });
+        if (profileForm) {
+            profileForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.saveProfile();
+            });
+        } else {
+            console.error('[RUthirsty] Missing DOM element: profileForm');
+        }
 
         // 提醒开关
         const reminderToggle = document.getElementById('reminderEnabled');
-        reminderToggle.addEventListener('change', (e) => {
-            this.toggleReminder(e.target.checked);
-        });
+        if (reminderToggle) {
+            reminderToggle.addEventListener('change', (e) => {
+                this.toggleReminder(e.target.checked);
+            });
+        } else {
+            console.error('[RUthirsty] Missing DOM element: reminderEnabled');
+        }
 
         // 一键购买开关
         const quickBuyToggle = document.getElementById('quickBuyEnabled');
-        quickBuyToggle.addEventListener('change', (e) => {
-            this.toggleQuickBuy(e.target.checked);
-        });
+        if (quickBuyToggle) {
+            quickBuyToggle.addEventListener('change', (e) => {
+                this.toggleQuickBuy(e.target.checked);
+            });
+        } else {
+            console.error('[RUthirsty] Missing DOM element: quickBuyEnabled');
+        }
 
         // 购买按钮
         const buyBtn = document.getElementById('buyBtn');
-        buyBtn.addEventListener('click', () => {
-            this.buyOnMeituan();
-        });
+        if (buyBtn) {
+            buyBtn.addEventListener('click', () => {
+                this.buyOnMeituan();
+            });
+        } else {
+            console.error('[RUthirsty] Missing DOM element: buyBtn');
+        }
 
         // 时段选择器
         const timeSlotBtns = document.querySelectorAll('.time-slot-btn');
@@ -122,13 +152,29 @@ const app = {
     saveRecord: function(record) {
         let records = this.getRecords();
         records.unshift(record);
-        localStorage.setItem('waterRecords', JSON.stringify(records));
+        try {
+            localStorage.setItem('waterRecords', JSON.stringify(records));
+        } catch (error) {
+            console.error('[RUthirsty] Failed to save water record:', error);
+            alert('保存记录失败，存储空间可能已满');
+        }
     },
 
     // 获取所有记录
     getRecords: function() {
         const data = localStorage.getItem('waterRecords');
-        return data ? JSON.parse(data) : [];
+        if (!data) return [];
+        try {
+            const parsed = JSON.parse(data);
+            if (!Array.isArray(parsed)) {
+                console.error('[RUthirsty] waterRecords is not an array, resetting');
+                return [];
+            }
+            return parsed;
+        } catch (error) {
+            console.error('[RUthirsty] Failed to parse waterRecords from localStorage:', error);
+            return [];
+        }
     },
 
     // 获取今日记录
@@ -185,13 +231,35 @@ const app = {
 
     // 保存个人资料
     saveProfile: function() {
+        const ageInput = document.getElementById('age');
+        const genderInput = document.getElementById('gender');
+        const workTypeInput = document.getElementById('workType');
+
+        if (!ageInput || !genderInput || !workTypeInput) {
+            console.error('[RUthirsty] Profile form elements not found');
+            alert('保存失败：表单元素缺失');
+            return;
+        }
+
+        const age = parseInt(ageInput.value);
+        if (isNaN(age) || age < 1 || age > 120) {
+            alert('请输入有效的年龄（1-120）');
+            return;
+        }
+
         const profile = {
-            age: parseInt(document.getElementById('age').value),
-            gender: document.getElementById('gender').value,
-            workType: document.getElementById('workType').value
+            age: age,
+            gender: genderInput.value,
+            workType: workTypeInput.value
         };
 
-        localStorage.setItem('userProfile', JSON.stringify(profile));
+        try {
+            localStorage.setItem('userProfile', JSON.stringify(profile));
+        } catch (error) {
+            console.error('[RUthirsty] Failed to save profile:', error);
+            alert('保存失败，存储空间可能已满');
+            return;
+        }
         this.updateRecommendation();
         alert('个人资料已保存');
     },
@@ -200,32 +268,55 @@ const app = {
     loadProfile: function() {
         const data = localStorage.getItem('userProfile');
         if (data) {
-            const profile = JSON.parse(data);
-            document.getElementById('age').value = profile.age || '';
-            document.getElementById('gender').value = profile.gender || '';
-            document.getElementById('workType').value = profile.workType || '';
+            let profile;
+            try {
+                profile = JSON.parse(data);
+            } catch (error) {
+                console.error('[RUthirsty] Failed to parse userProfile from localStorage:', error);
+                return;
+            }
+
+            const ageEl = document.getElementById('age');
+            const genderEl = document.getElementById('gender');
+            const workTypeEl = document.getElementById('workType');
+            if (ageEl) ageEl.value = profile.age || '';
+            if (genderEl) genderEl.value = profile.gender || '';
+            if (workTypeEl) workTypeEl.value = profile.workType || '';
         }
 
         // 加载提醒设置
         const reminderEnabled = localStorage.getItem('reminderEnabled') === 'true';
-        document.getElementById('reminderEnabled').checked = reminderEnabled;
+        const reminderEl = document.getElementById('reminderEnabled');
+        if (reminderEl) reminderEl.checked = reminderEnabled;
 
         // 加载一键购买设置
         const quickBuyEnabled = localStorage.getItem('quickBuyEnabled') === 'true';
-        document.getElementById('quickBuyEnabled').checked = quickBuyEnabled;
+        const quickBuyEl = document.getElementById('quickBuyEnabled');
+        if (quickBuyEl) quickBuyEl.checked = quickBuyEnabled;
         this.updateBuyButtonVisibility();
     },
 
     // 更新推荐信息
     updateRecommendation: function(timeSlot) {
         const profileData = localStorage.getItem('userProfile');
-        const profile = profileData ? JSON.parse(profileData) : null;
+        let profile = null;
+        if (profileData) {
+            try {
+                profile = JSON.parse(profileData);
+            } catch (error) {
+                console.error('[RUthirsty] Failed to parse userProfile for recommendation:', error);
+            }
+        }
 
         const recommendation = WaterRecommendation.getRecommendation(profile, timeSlot);
         const formatted = WaterRecommendation.formatRecommendation(recommendation);
 
         const recommendationCard = document.getElementById('recommendationCard');
-        recommendationCard.innerHTML = formatted.html;
+        if (recommendationCard) {
+            recommendationCard.innerHTML = formatted.html;
+        } else {
+            console.error('[RUthirsty] Missing DOM element: recommendationCard');
+        }
 
         // 保存当前推荐的水类型，供购买功能使用
         if (recommendation) {
@@ -237,7 +328,13 @@ const app = {
 
     // 切换一键购买
     toggleQuickBuy: function(enabled) {
-        localStorage.setItem('quickBuyEnabled', enabled);
+        try {
+            localStorage.setItem('quickBuyEnabled', enabled);
+        } catch (error) {
+            console.error('[RUthirsty] Failed to save quickBuy setting:', error);
+            alert('保存设置失败');
+            return;
+        }
         this.updateBuyButtonVisibility();
     },
 
@@ -245,6 +342,7 @@ const app = {
     updateBuyButtonVisibility: function() {
         const quickBuyEnabled = localStorage.getItem('quickBuyEnabled') === 'true';
         const buyBtn = document.getElementById('buyBtn');
+        if (!buyBtn) return;
         const profileData = localStorage.getItem('userProfile');
 
         if (quickBuyEnabled && profileData && this.currentWaterType) {
@@ -295,7 +393,13 @@ const app = {
 
     // 切换提醒
     toggleReminder: function(enabled) {
-        localStorage.setItem('reminderEnabled', enabled);
+        try {
+            localStorage.setItem('reminderEnabled', enabled);
+        } catch (error) {
+            console.error('[RUthirsty] Failed to save reminder setting:', error);
+            alert('保存设置失败');
+            return;
+        }
         if (enabled) {
             this.scheduleReminders();
             alert('喝水提醒已开启');
@@ -323,7 +427,15 @@ const app = {
         const profileData = localStorage.getItem('userProfile');
         if (!profileData) return;
 
-        const recommendation = WaterRecommendation.getRecommendation(JSON.parse(profileData));
+        let profile;
+        try {
+            profile = JSON.parse(profileData);
+        } catch (error) {
+            console.error('[RUthirsty] Failed to parse userProfile for notification:', error);
+            return;
+        }
+
+        const recommendation = WaterRecommendation.getRecommendation(profile);
         if (recommendation) {
             const water = WaterRecommendation.waterTypes[recommendation.waterType];
             this.showNotification(`该喝水了！建议喝${water.name} ${recommendation.amount}ml`);
@@ -339,6 +451,9 @@ const app = {
                 if (permission === 'granted') {
                     new Notification('喝水提醒', { body: message });
                 }
+            }).catch(error => {
+                console.error('[RUthirsty] Failed to request notification permission:', error);
+                alert(message);
             });
         } else {
             alert(message);
