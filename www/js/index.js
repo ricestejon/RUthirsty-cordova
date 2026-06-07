@@ -122,13 +122,12 @@ const app = {
     saveRecord: function(record) {
         let records = this.getRecords();
         records.unshift(record);
-        localStorage.setItem('waterRecords', JSON.stringify(records));
+        StorageUtils.setJSON('waterRecords', records);
     },
 
     // 获取所有记录
     getRecords: function() {
-        const data = localStorage.getItem('waterRecords');
-        return data ? JSON.parse(data) : [];
+        return StorageUtils.getJSON('waterRecords', []);
     },
 
     // 获取今日记录
@@ -167,20 +166,14 @@ const app = {
         recordsList.innerHTML = html;
     },
 
-    // 格式化日期
+    // 格式化日期 (delegates to shared DateUtils)
     formatDate: function(date) {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
+        return DateUtils.formatDate(date);
     },
 
-    // 格式化时间
+    // 格式化时间 (delegates to shared DateUtils)
     formatTime: function(date) {
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        const seconds = String(date.getSeconds()).padStart(2, '0');
-        return `${hours}:${minutes}:${seconds}`;
+        return DateUtils.formatTime(date);
     },
 
     // 保存个人资料
@@ -191,35 +184,31 @@ const app = {
             workType: document.getElementById('workType').value
         };
 
-        localStorage.setItem('userProfile', JSON.stringify(profile));
+        StorageUtils.setJSON('userProfile', profile);
         this.updateRecommendation();
         alert('个人资料已保存');
     },
 
     // 加载个人资料
     loadProfile: function() {
-        const data = localStorage.getItem('userProfile');
-        if (data) {
-            const profile = JSON.parse(data);
+        const profile = StorageUtils.getJSON('userProfile', null);
+        if (profile) {
             document.getElementById('age').value = profile.age || '';
             document.getElementById('gender').value = profile.gender || '';
             document.getElementById('workType').value = profile.workType || '';
         }
 
         // 加载提醒设置
-        const reminderEnabled = localStorage.getItem('reminderEnabled') === 'true';
-        document.getElementById('reminderEnabled').checked = reminderEnabled;
+        document.getElementById('reminderEnabled').checked = StorageUtils.getBoolean('reminderEnabled');
 
         // 加载一键购买设置
-        const quickBuyEnabled = localStorage.getItem('quickBuyEnabled') === 'true';
-        document.getElementById('quickBuyEnabled').checked = quickBuyEnabled;
+        document.getElementById('quickBuyEnabled').checked = StorageUtils.getBoolean('quickBuyEnabled');
         this.updateBuyButtonVisibility();
     },
 
     // 更新推荐信息
     updateRecommendation: function(timeSlot) {
-        const profileData = localStorage.getItem('userProfile');
-        const profile = profileData ? JSON.parse(profileData) : null;
+        const profile = StorageUtils.getJSON('userProfile', null);
 
         const recommendation = WaterRecommendation.getRecommendation(profile, timeSlot);
         const formatted = WaterRecommendation.formatRecommendation(recommendation);
@@ -237,17 +226,17 @@ const app = {
 
     // 切换一键购买
     toggleQuickBuy: function(enabled) {
-        localStorage.setItem('quickBuyEnabled', enabled);
+        StorageUtils.setBoolean('quickBuyEnabled', enabled);
         this.updateBuyButtonVisibility();
     },
 
     // 更新购买按钮显示状态
     updateBuyButtonVisibility: function() {
-        const quickBuyEnabled = localStorage.getItem('quickBuyEnabled') === 'true';
+        const quickBuyEnabled = StorageUtils.getBoolean('quickBuyEnabled');
         const buyBtn = document.getElementById('buyBtn');
-        const profileData = localStorage.getItem('userProfile');
+        const hasProfile = StorageUtils.getJSON('userProfile', null) !== null;
 
-        if (quickBuyEnabled && profileData && this.currentWaterType) {
+        if (quickBuyEnabled && hasProfile && this.currentWaterType) {
             buyBtn.style.display = 'block';
         } else {
             buyBtn.style.display = 'none';
@@ -287,15 +276,14 @@ const app = {
 
     // 初始化提醒功能
     initReminder: function() {
-        const reminderEnabled = localStorage.getItem('reminderEnabled') === 'true';
-        if (reminderEnabled) {
+        if (StorageUtils.getBoolean('reminderEnabled')) {
             this.scheduleReminders();
         }
     },
 
     // 切换提醒
     toggleReminder: function(enabled) {
-        localStorage.setItem('reminderEnabled', enabled);
+        StorageUtils.setBoolean('reminderEnabled', enabled);
         if (enabled) {
             this.scheduleReminders();
             alert('喝水提醒已开启');
@@ -317,13 +305,12 @@ const app = {
 
     // 检查并发送通知
     checkAndNotify: function() {
-        const reminderEnabled = localStorage.getItem('reminderEnabled') === 'true';
-        if (!reminderEnabled) return;
+        if (!StorageUtils.getBoolean('reminderEnabled')) return;
 
-        const profileData = localStorage.getItem('userProfile');
-        if (!profileData) return;
+        const profile = StorageUtils.getJSON('userProfile', null);
+        if (!profile) return;
 
-        const recommendation = WaterRecommendation.getRecommendation(JSON.parse(profileData));
+        const recommendation = WaterRecommendation.getRecommendation(profile);
         if (recommendation) {
             const water = WaterRecommendation.waterTypes[recommendation.waterType];
             this.showNotification(`该喝水了！建议喝${water.name} ${recommendation.amount}ml`);
