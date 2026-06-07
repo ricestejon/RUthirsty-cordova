@@ -2,12 +2,22 @@
 set -e
 #!/bin/bash
 
-# 设置环境变量
-export ANTHROPIC_AUTH_TOKEN=sk-OTpmRgI7jPLkYXuY4f6064280641421bB8E58bAb0dB959Ba
-export ANTHROPIC_BASE_URL=https://new.aicode.us.com
-# 备选API线路（去掉下面两行注释生效）
-# export ANTHROPIC_AUTH_TOKEN=sk-BnACKGNS5fruSd9Mmm2cH4MuLXGR27sB0md9KsYN6fvR4CYi
-# export ANTHROPIC_BASE_URL=https://xinghuapi.com
+# Load environment variables from .env file if present
+if [ -f .env ]; then
+    set -a
+    . .env
+    set +a
+fi
+
+# Verify required environment variables
+if [ -z "$ANTHROPIC_AUTH_TOKEN" ]; then
+    echo "Error: ANTHROPIC_AUTH_TOKEN is not set. Create a .env file with your token."
+    exit 1
+fi
+if [ -z "$ANTHROPIC_BASE_URL" ]; then
+    echo "Error: ANTHROPIC_BASE_URL is not set. Create a .env file with your base URL."
+    exit 1
+fi
 
 first_run=false
 # 检查claude是否已安装
