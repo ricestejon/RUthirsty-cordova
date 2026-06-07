@@ -21,19 +21,9 @@ const WaterRecommendation = {
         beforeSleep: { start: 20, end: 22, name: '睡前' }
     },
 
-    // 获取当前时间段
+    // 获取当前时间段 (delegates to shared DateUtils)
     getCurrentTimeSlot: function() {
-        const hour = new Date().getHours();
-
-        if (hour >= 6 && hour < 8) return 'earlyMorning';
-        if (hour >= 8 && hour < 11) return 'morning';
-        if (hour >= 11 && hour < 12) return 'beforeLunch';
-        if (hour >= 12 && hour < 14) return 'afterLunch';
-        if (hour >= 14 && hour < 17) return 'afternoon';
-        if (hour >= 17 && hour < 20) return 'evening';
-        if (hour >= 20 && hour < 22) return 'beforeSleep';
-
-        return 'night';
+        return DateUtils.getCurrentTimeSlot();
     },
 
     // 根据用户资料和时间段生成推荐
